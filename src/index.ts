@@ -17,5 +17,5 @@ app.use('*', (req, res) => {
   res.send('<h1>Welcome to your simple server! Awesome right</h1>');
 });
 
-app.listen(process.env.PORT || 3000,
+app.listen(process.env.PORT || 5000,
   () => console.log('Server is running...'));
