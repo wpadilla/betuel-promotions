@@ -21,4 +21,4 @@ app.use('*', (req, res) => {
 });
 
 app.listen(process.env.API_PORT || 8080,
-  () => console.log('Server is running at port: ' + process.env.API_PORT || 8080));
+  () => console.log(`Server is running at port: ${process.env.API_PORT || 8080}`));
