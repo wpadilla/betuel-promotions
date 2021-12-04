@@ -19,5 +19,5 @@ app.get('/products/', (req, res) => {
 app.use('*', (req, res) => {
     res.send('<h1>Welcome to your simple server! Awesome right</h1>');
 });
-app.listen(80, () => console.log('Server is running...'));
+app.listen(process.env.API_PORT || 8080, () => console.log('Server is running at port: ' + process.env.API_PORT || 8080));
 //# sourceMappingURL=index.js.map
