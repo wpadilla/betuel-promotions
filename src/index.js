@@ -5,11 +5,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const body_parser_1 = __importDefault(require("body-parser"));
+const cors_1 = __importDefault(require("cors"));
 const app = (0, express_1.default)();
+app.use((0, cors_1.default)());
 app.use(body_parser_1.default.json());
 app.use(body_parser_1.default.urlencoded({ extended: true }));
 app.use(express_1.default.static(`${__dirname}/assets`));
-// app.listen(process.env.API_PORT || 5000, (req: any, res: any) => {
-//   res.send('Hellow');
-// });
-exports.default = app;
+app.listen(process.env.PORT || 3000, () => console.log('Server is running...'));
