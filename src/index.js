@@ -11,4 +11,7 @@ app.use((0, cors_1.default)());
 app.use(body_parser_1.default.json());
 app.use(body_parser_1.default.urlencoded({ extended: true }));
 app.use(express_1.default.static(`${__dirname}/assets`));
+app.get('/products/', (req, res) => {
+    res.json({ msg: 'This is CORS-enabled for all origins!' });
+});
 app.listen(process.env.PORT || 3000, () => console.log('Server is running...'));
