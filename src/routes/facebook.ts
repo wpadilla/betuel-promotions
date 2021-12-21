@@ -6,7 +6,7 @@ const facebookRouter = Router();
 facebookRouter.post('', async (req, res) => {
   try {
     const data = req.body;
-    await publishInMarketplace(data, res);
+    await publishInMarketplace([...data], res);
     // res.status(200).json(data);
   } catch (err) {
     res.status(500).json({ err });

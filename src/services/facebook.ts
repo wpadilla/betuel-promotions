@@ -6,14 +6,18 @@ import { overridePermissions } from '../actions/permissions';
 import { facebookLogin } from '../actions/login';
 import { refObjFromKeys } from '../utils/DOMRefs';
 
-export const publishInMarketplace = async (publication: IFBMarketPlacePublication, res: any) => {
-  puppeteer.launch({
-    headless: true, // put false to see how the bot work
+let pubIndex = 0;
+
+export const publishInMarketplace = async (publications: IFBMarketPlacePublication[], res: any) => {
+  const publication = publications[pubIndex];
+  const browser = await  puppeteer.launch({
+    headless: false, // put false to see how the bot work
     args: [
       '--no-sandbox',
       '--disable-setuid-sandbox',
     ],
-  }).then((browser) => {
+  })
+
     browser.newPage().then(async (page) => {
       overridePermissions(browser, urls.facebookURL);
 
@@ -73,14 +77,14 @@ export const publishInMarketplace = async (publication: IFBMarketPlacePublicatio
           await page.click(inputRefs.publishButton);
           await page.waitForNetworkIdle();
           await page.waitForTimeout(3000);
-          // await page.evaluate(() => (document.querySelectorAll('[aria-label="Más"]')[2] as any).click());
+          // await page.evaluate(() =>
+          // (document.querySelectorAll('[aria-label="Más"]')[2] as any).click());
           // await page.waitForTimeout(2000);
           await page.click(inputRefs.publishedItemListImg);
           await page.waitForNetworkIdle();
           await page.waitForTimeout(1000);
 
           const publicationUrl: string = (await page.$eval(inputRefs.itemLink, (item: any) => item.href)) || '';
-          console.log(publicationUrl, 'klk');
 
           // const publicationUrl: string = await page.evaluate(
           //   () => {
@@ -95,13 +99,15 @@ export const publishInMarketplace = async (publication: IFBMarketPlacePublicatio
           // );
           // extracting the publicationID from the publicationUrl.split('/')
           const publicationId = publicationUrl ? publicationUrl.split('/')[publicationUrl.split('/').length - 2] : 0;
-          res.status(200).json({ url: publicationUrl, id: publicationId });
-          browser.close();
+          if (pubIndex === publications.length - 1) {
+            res.status(200).json({ url: publicationUrl, id: publicationId });
+            browser.close();
+          } else {
+            pubIndex += 1;
+            publishInMarketplace(publications, res);
+          }
         });
     }).catch((err) => {
       res.status(500).json({ err });
     });
-  }).catch((err) => {
-    res.status(500).json({ err });
-  });
 };
