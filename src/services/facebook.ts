@@ -8,7 +8,7 @@ import { refObjFromKeys } from '../utils/DOMRefs';
 
 export const publishInMarketplace = async (publication: IFBMarketPlacePublication, res: any) => {
   await puppeteer.launch({
-    headless: true, // put false to see how the bot work
+    headless: false, // put false to see how the bot work
   }).then((browser) => {
     browser.newPage().then(async (page) => {
       overridePermissions(browser, urls.facebookURL);
