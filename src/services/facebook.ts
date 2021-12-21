@@ -8,7 +8,7 @@ import { refObjFromKeys } from '../utils/DOMRefs';
 
 export const publishInMarketplace = async (publication: IFBMarketPlacePublication, res: any) => {
   await puppeteer.launch({
-    headless: false, // put false to see how the bot work
+    headless: true, // put false to see how the bot work
       args: [
           '--no-sandbox',
           '--disable-setuid-sandbox',
