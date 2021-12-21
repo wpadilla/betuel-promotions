@@ -7,4 +7,5 @@ export interface ICommonProductPublication {
 
 export interface IFBMarketPlacePublication extends ICommonProductPublication{
     tags?: string,
+    brand?: string,
 }

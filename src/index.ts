@@ -2,6 +2,7 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import { config } from 'dotenv';
+import facebookRouter from "./routes/facebook";
 
 config();
 
@@ -16,9 +17,11 @@ app.get('/products/', (req, res) => {
   res.json({ msg: 'This is CORS-enabled for all origins!' });
 });
 
-app.use('*', (req, res) => {
-  res.send('<h1>Welcome to your simple server! Awesome right</h1>');
-});
+app.use('/api/facebook', facebookRouter);
+
+// app.use('*', (req, res) => {
+//   res.send('<h1>Welcome to your simple server! Awesome right</h1>');
+// });
 
 app.listen(process.env.PORT || 3000,
   () => console.log(`Server is running at port: ${process.env.PORT || 3000}`));

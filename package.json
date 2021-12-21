@@ -1,10 +1,10 @@
 {
   "scripts": {
     "build": "tsc --project ./",
-    "dev": "ts-node src/index.ts",
+    "dev": "tsc -w & nodemon -q -w dist dist/main.js",
     "lint": "eslint . --ext .ts",
     "start": "node dist/index.js",
-    "postinstall": "tsc",
+    "postinstall": "tsc && mv -i -v public dist/ && rm -v -rf src",
     "watch-ts": "tsc -w",
     "deploy": "git add . && git commit -m Heroku && git push heroku main"
   },
@@ -34,6 +34,7 @@
     "eslint-plugin-jsx-a11y": "^6.5.1",
     "eslint-plugin-react": "^7.27.1",
     "eslint-plugin-react-hooks": "^4.3.0",
+    "nodemon": "^2.0.15",
     "ts-node": "^10.4.0",
     "typescript": "^4.5.2"
   },
