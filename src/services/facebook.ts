@@ -81,6 +81,7 @@ export const publishInMarketplace = async (publication: IFBMarketPlacePublicatio
 
           const publicationUrl: string = (await page.$eval(inputRefs.itemLink, (item: any) => item.href)) || '';
           console.log(publicationUrl, 'klk');
+
           // const publicationUrl: string = await page.evaluate(
           //   () => {
           //     const item: any = Array.from(
