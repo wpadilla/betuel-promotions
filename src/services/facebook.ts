@@ -83,7 +83,8 @@ export const publishInMarketplace = async (publication: IFBMarketPlacePublicatio
           console.log(publicationUrl, 'klk');
           // const publicationUrl: string = await page.evaluate(
           //   () => {
-          //     const item: any = Array.from(document.querySelectorAll('.tojvnm2t .j83agx80 a.oajrlxb2'))
+          //     const item: any = Array.from(
+          //     document.querySelectorAll('.tojvnm2t .j83agx80 a.oajrlxb2'))
           //       .find((el: any) => {
           //         const id = el.href.split('/')[el.href.split('/').length - 2];
           //         return !!Number(id);
@@ -92,7 +93,7 @@ export const publishInMarketplace = async (publication: IFBMarketPlacePublicatio
           //   },
           // );
           // extracting the publicationID from the publicationUrl.split('/')
-          const publicationId = publicationUrl.split('/')[publicationUrl.split('/').length - 2];
+          const publicationId = publicationUrl ? publicationUrl.split('/')[publicationUrl.split('/').length - 2] : 0;
           res.status(200).json({ url: publicationUrl, id: publicationId });
           browser.close();
         });
