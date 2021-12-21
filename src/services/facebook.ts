@@ -7,12 +7,12 @@ import { facebookLogin } from '../actions/login';
 import { refObjFromKeys } from '../utils/DOMRefs';
 
 export const publishInMarketplace = async (publication: IFBMarketPlacePublication, res: any) => {
-  await puppeteer.launch({
+  puppeteer.launch({
     headless: true, // put false to see how the bot work
-      args: [
-          '--no-sandbox',
-          '--disable-setuid-sandbox',
-      ],
+    args: [
+      '--no-sandbox',
+      '--disable-setuid-sandbox',
+    ],
   }).then((browser) => {
     browser.newPage().then(async (page) => {
       overridePermissions(browser, urls.facebookURL);
@@ -91,11 +91,15 @@ export const publishInMarketplace = async (publication: IFBMarketPlacePublicatio
           //     return item.href;
           //   },
           // );
-            // extracting the publicationID from the publicationUrl.split('/')
+          // extracting the publicationID from the publicationUrl.split('/')
           const publicationId = publicationUrl.split('/')[publicationUrl.split('/').length - 2];
           res.status(200).json({ url: publicationUrl, id: publicationId });
           browser.close();
         });
+    }).catch((err) => {
+      res.status(500).json({ err });
     });
+  }).catch((err) => {
+    res.status(500).json({ err });
   });
 };
