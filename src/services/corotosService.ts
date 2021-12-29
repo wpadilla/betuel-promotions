@@ -19,7 +19,7 @@ export const publishInCorotos = async (publications: IFBMarketPlacePublication[]
   try {
     if (!lastPage) {
       browser = await puppeteer.launch({
-        headless: isHeadless, // put false to see how the bot work
+        headless: true, // put false to see how the bot work
         args: [
           '--no-sandbox',
           '--disable-setuid-sandbox',

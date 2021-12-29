@@ -14,16 +14,16 @@ export const publishInFlea = async (publications: IFBMarketPlacePublication[], r
   let page = lastPage || {} as Page;
   let browser = lastBrowser || {} as Browser;
 
-  const isHeadless = publications.length <= 1;
+  const isHeadless = publications.length <= 5;
   const publication = publications[pubIndex];
   // /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --remote-debugging-port=9222 --no-first-run --no-default-browser-check --user-data-dir=$(mktemp -d -t 'chrome-remote_data_dir')
   // const connectedBrowser = await puppeteer.connect({browserWSEndpoint: 'ws://127.0.0.1:9222/devtools/browser/3a4e607c-fa9d-4402-ad87-9da9eea7d7d5'})
   try {
     if (!lastPage) {
       browser = await puppeteer.launch({
-        executablePath: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
+        // executablePath: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
         // userDataDir: '/Users/admin/Library/Application Support/Google/Chrome/Profile 7',
-        headless: isHeadless, // put false to see how the bot work
+        headless: true, // put false to see how the bot work
         args: [
           '--no-sandbox',
           '--disable-setuid-sandbox',
