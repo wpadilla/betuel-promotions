@@ -21,7 +21,7 @@ export const publishInFlea = async (publications: IFBMarketPlacePublication[], r
   try {
     if (!lastPage) {
       browser = await puppeteer.launch({
-        // executablePath: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
+        executablePath: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
         // userDataDir: '/Users/admin/Library/Application Support/Google/Chrome/Profile 7',
         headless: isHeadless, // put false to see how the bot work
         args: [
