@@ -1,5 +1,6 @@
 import { Page } from 'puppeteer';
-import { IDomRefObjectKeys, refObjFromKeys } from '../utils/DOMRefs';
+import { refObjFromKeys } from '../utils/DOMRefs';
+import { EcommerceTypes } from "../utils/credentials";
 
 export type IMultipleInputValues = {
   [N in string]?: string;
@@ -15,7 +16,7 @@ export const fillInput = async (page: Page, inputRef: string, value: string) => 
 * @param inputValues: an object with the values to fill some form input
 * @param refObjType: marketplace ref to the object with the references of the dom to each input
 *  */
-export const fillMultipleInputs = async (page: Page, inputValues: IMultipleInputValues, refObjType: IDomRefObjectKeys) => {
+export const fillMultipleInputs = async (page: Page, inputValues: IMultipleInputValues, refObjType: EcommerceTypes) => {
   // object with all references to the dom for the marketplace selected
   const domRefObj = refObjFromKeys[refObjType];
   await Promise.all(Object.keys(inputValues).map((inputKey) => {

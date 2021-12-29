@@ -2,7 +2,10 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import { config } from 'dotenv';
-import facebookRouter from "./routes/facebook";
+import facebookRouter from './routes/facebook';
+import corotosRouter from './routes/corotos';
+import fleaRouter from './routes/flea';
+import freeMarketRouter from './routes/freeMarket';
 
 config();
 
@@ -18,6 +21,9 @@ app.get('/products/', (req, res) => {
 });
 
 app.use('/api/facebook', facebookRouter);
+app.use('/api/corotos', corotosRouter);
+app.use('/api/flea', fleaRouter);
+app.use('/api/free-market', freeMarketRouter);
 
 // app.use('*', (req, res) => {
 //   res.send('<h1>Welcome to your simple server! Awesome right</h1>');

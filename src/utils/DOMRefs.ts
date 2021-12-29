@@ -1,8 +1,10 @@
+import { EcommerceTypes } from "./credentials";
+
 export const facebookDOMRefObjects = {
   title: 'label[aria-label="Título"] input',
   price: 'label[aria-label="Precio"] input',
-  description: 'textarea:nth-child(1)',
-  tags: 'textarea:nth-child(2)',
+  description: 'textarea:nth-child(2)',
+  tags: 'textarea:nth-child(1)',
   categorySelect: 'label[aria-label="Categoría"]',
   state: 'label[aria-label="Estado"]',
   brand: 'label[aria-label="Marca"]',
@@ -17,12 +19,52 @@ export const facebookDOMRefObjects = {
   itemLink: '.o9dq31lf a',
 };
 
-export type IDomRefObjectKeys = 'fb' | 'ct';
+export const corotosDOMRefObjects = {
+  title: '#listing_title',
+  price: '#listing_price',
+  description: '#listing_description',
+  categorySelect: { selector: '#listing_category_id', value: '8' },
+  subCategorySelect: { selector: '#listing_sub_category_id', value: '60' },
+  continueButton: '.wizard__actions-button .button:nth-child(2)',
+  state: { selector: '#listing_condition_input .select-field', value: '57' },
+  delivery: { selector: '#listing_has_delivery_input .select-field', value: '15' },
+  location: { selector: '#listing_province_id', value: '29' },
+  city: { selector: '#listing_borough_id', value: '71' },
+  sector: '.vs__search',
+};
+
+export const freeMarketDOMRefObjects = {
+  title: '#listing_title',
+  price: '#listing_price',
+  description: '#listing_description',
+  categorySelect: { selector: '#listing_category_id', value: '8' },
+  subCategorySelect: { selector: '#listing_sub_category_id', value: '60' },
+  continueButton: '.wizard__actions-button .button:nth-child(2)',
+  state: { selector: '#listing_condition_input .select-field', value: '57' },
+  delivery: { selector: '#listing_has_delivery_input .select-field', value: '15' },
+  location: { selector: '#listing_province_id', value: '29' },
+  city: { selector: '#listing_borough_id', value: '71' },
+  sector: '.vs__search',
+};
+
+export const fleaDOMRefObjects = {
+  title: '#articulo',
+  price: '#precio',
+  description: '#descripcion',
+  categorySelect: { selector: '#categoria', value: '2-23' },
+  subCategorySelect: { selector: '#listing_sub_category_id', value: '60' },
+  continueButton: '.wizard__actions-button .button:nth-child(2)',
+  state: '#nuevo',
+  uploadImageFileInput: '#fotos',
+  publishButton: 'input[type="submit"]',
+};
 
 export type IRefObjectFromKeys = {
-  [N in IDomRefObjectKeys]: { [R in string]: string };
+  [N in EcommerceTypes]: { [R in string]: string | any};
 }
 export const refObjFromKeys: IRefObjectFromKeys = {
-  fb: facebookDOMRefObjects,
-  ct: facebookDOMRefObjects,
+  facebook: facebookDOMRefObjects,
+  corotos: corotosDOMRefObjects,
+  freeMarket: freeMarketDOMRefObjects,
+  flea: fleaDOMRefObjects,
 };

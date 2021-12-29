@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { publishInMarketplace } from '../services/facebook';
+import { publishInMarketplace } from '../services/facebookService';
 
 const facebookRouter = Router();
 

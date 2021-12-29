@@ -1,8 +1,9 @@
 export interface ICommonProductPublication {
-    title: string,
+    name: string,
     description: string,
     price: string,
     image: string,
+    GodWord: string,
 }
 
 export interface IFBMarketPlacePublication extends ICommonProductPublication{
