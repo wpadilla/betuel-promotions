@@ -13,6 +13,7 @@ const urls = {
   freeMarketLogin: 'https://www.mercadolibre.com/jms/mrd/lgz/msl/login/',
   freeMarket: 'https://www.mercadolibre.com.do/',
   fleaNewPub: 'https://www.lapulga.com.do/publicar',
+
   corotosNewPub: 'https://www.corotos.com.do/listing_wizards',
   facebookMarketPlace: 'https://www.facebook.com/marketplace/create/item',
   getWhatsappMessageURL: async (message: string) => {
