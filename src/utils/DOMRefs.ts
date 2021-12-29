@@ -30,6 +30,7 @@ export const corotosDOMRefObjects = {
   delivery: { selector: '#listing_has_delivery_input .select-field', value: '15' },
   location: { selector: '#listing_province_id', value: '29' },
   city: { selector: '#listing_borough_id', value: '71' },
+  uploadImageFileInput: '#select_product_image',
   sector: '.vs__search',
 };
 
