@@ -9,6 +9,7 @@ import { handlePublicationError } from '../utils/errors';
 
 let pubIndex = 0;
 const responseData: any = [];
+const defaultTags = 'Betuel Tech\n Betuel\n Dios\n Cristo\n tecnologia\n accesorios\n wireless\n bluetooth\n inalambrico\n acesorios de celulares\n audifonos\n bocina\n sonido\n entretenimiento\n oferta\n barato\n calidad\n'
 
 export const publishInMarketplace = async (publications: IFBMarketPlacePublication[], res: any, lastPage?: Page, lastBrowser?: Browser) => {
   const publication = publications[pubIndex];
@@ -61,8 +62,16 @@ ${whatsappURL}
           inputFile && await inputFile.uploadFile(filePath);
           await page.type(inputRefs.title, `${publication.name} | Betuel Tech`);
           await page.type(inputRefs.price, publication.price.toString());
+          // selecting state
+          await page.click(inputRefs.state);
+          await page.waitForTimeout(2000);
+          // selecting Nuevo state
+          await page.evaluate(() => {
+            (document.querySelectorAll('[role="menu"] .oajrlxb2 .qzhwtbm6.knvmm38d')[0] as any).click();
+          });
+
           await page.type(inputRefs.description, productDescription);
-          await page.type(inputRefs.tags, publication.tags || '');
+          await page.type(inputRefs.tags, publication.tags || defaultTags);
           // await fillMultipleInputs(page, {
           //   title: publication.title,
           //   price: publication.price,
@@ -76,32 +85,6 @@ ${whatsappURL}
           await page.evaluate(() => {
             (document.querySelectorAll('.jxo0map8')[15] as any).click();
           });
-
-          await page.click(inputRefs.state);
-          await page.waitForTimeout(2000);
-          // selecting Nuevo state
-          const stateResponse = await page.evaluate(() => {
-            const option = document.querySelectorAll('.oajrlxb2 .qzhwtbm6.knvmm38d')[1] as any;
-            if (option) {
-              option.click();
-              return true;
-            }
-            return false;
-          });
-          console.log('state', stateResponse);
-          if(!stateResponse) {
-            await page.click(inputRefs.state);
-            await page.waitForTimeout(2000);
-            // selecting Nuevo state
-            await page.evaluate(() => {
-              const option = document.querySelectorAll('.oajrlxb2 .qzhwtbm6.knvmm38d')[1] as any;
-              if (option) {
-                option.click();
-                return true;
-              }
-              return false;
-            });
-          }
 
           await page.click(inputRefs.nextButton);
           await page.waitForTimeout(3000);
