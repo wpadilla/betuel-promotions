@@ -21,12 +21,15 @@ const urls = {
     const bitly = new prettylink.Bitly('148ea04a1150f74e1cf96981a6214744806c123b');
 
     // Or use init function
-
-
     const url = `https://wa.me/${whatsappPhone}?text=${encodeURI(message)}`;
-    const shortenUrl = await bitly.short(url);
-    // Shorten with Alias Promise Example
-    return shortenUrl.link || url;
+
+    try {
+      const shortenUrl = await bitly.short(url);
+      // Shorten with Alias Promise Example
+      return shortenUrl.link || url;
+    } catch (err) {
+      return url;
+    }
   },
 };
 

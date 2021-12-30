@@ -13,6 +13,7 @@ const defaultTags = 'Betuel Tech\n Betuel\n Dios\n Cristo\n tecnologia\n accesor
 
 export const publishInMarketplace = async (publications: IFBMarketPlacePublication[], res: any, lastPage?: Page, lastBrowser?: Browser) => {
   const publication = publications[pubIndex];
+  console.log(pubIndex, 'publish', publication);
   const isHeadless = publications.length <= 1;
 
   let page = lastPage || {} as Page;
