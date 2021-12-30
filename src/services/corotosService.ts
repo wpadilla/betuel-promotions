@@ -26,6 +26,7 @@ export const publishInCorotos = async (publications: IFBMarketPlacePublication[]
         ],
       });
 
+
       page = await browser.newPage();
       overridePermissions(browser, urls.corotos);
       await page.goto(urls.corotosLogin);
