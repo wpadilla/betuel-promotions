@@ -83,6 +83,8 @@ ${whatsappURL}
           await page.type(inputRefs.sector, 'Las Caobas');
 
           await page.click(inputRefs.continueButton);
+          await page.waitForNavigation();
+          // await page.waitForTimeout(2000)
 
           if (pubIndex === publications.length - 1) {
             // responseData.push({ url: publicationUrl, id: publicationId });
