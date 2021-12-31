@@ -31,6 +31,7 @@ const urls = {
       return url;
     }
   },
+
 };
 
 export default urls;
