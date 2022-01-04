@@ -45,7 +45,7 @@ export const publishInMarketplace = async (publications: IFBMarketPlacePublicati
     // all dom refs for facebook
     const inputRefs = refObjFromKeys.facebook;
     const inputFile = await page.$(inputRefs.inputFIle);
-    const data = await page.evaluate(() => document.querySelector('body').innerText);
+    const data = await page.evaluate(() => (document.querySelector('body') as any).innerText);
     console.log(inputFile, 'body');
     console.log('what', data);
     await page.waitForSelector(inputRefs.inputFIle);
