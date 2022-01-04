@@ -9,7 +9,7 @@ import { handlePublicationError } from '../utils/errors';
 
 let pubIndex = 0;
 const responseData: any = [];
-const defaultTags = 'Betuel Tech\n Betuel\n Dios\n Cristo\n tecnologia\n accesorios\n wireless\n bluetooth\n inalambrico\n acesorios de celulares\n audifonos\n bocina\n sonido\n entretenimiento\n oferta\n barato\n calidad\n'
+const defaultTags = 'Betuel Tech\n Betuel\n Dios\n Cristo\n tecnologia\n accesorios\n wireless\n bluetooth\n inalambrico\n acesorios de celulares\n audifonos\n bocina\n sonido\n entretenimiento\n oferta\n barato\n calidad\n';
 
 export const publishInMarketplace = async (publications: IFBMarketPlacePublication[], res: any, lastPage?: Page, lastBrowser?: Browser) => {
   const publication = publications[pubIndex];
@@ -44,10 +44,11 @@ export const publishInMarketplace = async (publications: IFBMarketPlacePublicati
 
     // all dom refs for facebook
     const inputRefs = refObjFromKeys.facebook;
-    console.log((await page.$('body') as any).ta.innerText, 'body');
-    await page.waitForSelector(inputRefs.title);
-
     const inputFile = await page.$(inputRefs.inputFIle);
+    const data = await page.evaluate(() => document.querySelector('body').innerText);
+    console.log(inputFile, 'body');
+    console.log('what', data);
+    await page.waitForSelector(inputRefs.inputFIle);
 
     const whatsappURL = await urls.getWhatsappMessageURL(`Estoy interesado en este producto "${publication.name}". ¿Aún está disponible?  \n \n ${publication.image}`);
     // const whatsappURL = 'whatsapp';
