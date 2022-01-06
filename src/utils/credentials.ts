@@ -8,7 +8,7 @@ export type EcommerceTypes = 'facebook' | 'corotos' | 'freeMarket' | 'flea';
 export const credentials: { [N in EcommerceTypes] : ICredentials } = {
   facebook: {
     email: 'audsongs@hotmail.com', // fb email, phone, or username
-    pass: 'washicolesten', // fb password
+    pass: '15282118', // fb password
   },
   corotos: {
     email: 'audsongs@hotmail.com', // fb email, phone, or username
