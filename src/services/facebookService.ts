@@ -33,6 +33,7 @@ export const publishInMarketplace = async (publications: IFBMarketPlacePublicati
       await page.goto(`${urls.facebook}login`);
 
       await facebookLogin(page);
+      await page.waitForTimeout(3000);
     }
 
     page.goto(urls.facebookMarketPlace);
@@ -46,7 +47,7 @@ export const publishInMarketplace = async (publications: IFBMarketPlacePublicati
     // all dom refs for facebook
     const inputRefs = refObjFromKeys.facebook;
     const inputFile = await page.$(inputRefs.inputFIle);
-    await page.waitForSelector(inputRefs.inputFIle);
+    await page.waitForSelector(inputRefs.title);
 
     const whatsappURL = await urls.getWhatsappMessageURL(`Estoy interesado en este producto "${publication.name}". ¿Aún está disponible?  \n \n ${publication.image}`);
     // const whatsappURL = 'whatsapp';

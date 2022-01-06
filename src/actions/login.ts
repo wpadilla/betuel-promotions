@@ -52,7 +52,10 @@ export const loginWithSessionFacebook = async (cookies: any, page: Page) => {
 export const facebookLogin = async (page: Page) => {
   // Load cookies from previous session
   const buffer = await fs.readFileSync(path.join(__dirname, '../utils/cookies.js'));
-  const data = buffer.toString().replace('use strict', '').replace('//# sourceMappingURL=cookies.js.map', '').replace(/[;]/gi, '');
+  const data = buffer.toString().replace('"use strict"', '')
+    .replace('//# sourceMappingURL=cookies.js.map', '')
+    .replace('//# sourceMappingURL=cookies.js.map', '')
+    .replace(/[;]/gi, '');
   const cookies = data ? JSON.parse(data) : undefined;
   // Use our cookies to login. If it fails fallback to username and password login.
   if (cookies && Object.keys(cookies).length) {
