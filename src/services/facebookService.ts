@@ -13,7 +13,6 @@ const defaultTags = 'Betuel Tech\n Betuel\n Dios\n Cristo\n tecnologia\n accesor
 
 export const publishInMarketplace = async (publications: IFBMarketPlacePublication[], res: any, lastPage?: Page, lastBrowser?: Browser) => {
   const publication = publications[pubIndex];
-  console.log(pubIndex, 'publish', publication);
   const isHeadless = publications.length <= 1;
 
   let page = lastPage || {} as Page;
@@ -22,7 +21,7 @@ export const publishInMarketplace = async (publications: IFBMarketPlacePublicati
 
     if (!lastPage) {
       browser = await puppeteer.launch({
-        headless: true, // put false to see how the bot work
+        headless: false, // put false to see how the bot work
         args: [
           '--no-sandbox',
           '--disable-setuid-sandbox',
@@ -32,15 +31,8 @@ export const publishInMarketplace = async (publications: IFBMarketPlacePublicati
       page = await browser.newPage();
       overridePermissions(browser, urls.facebook);
       await page.goto(`${urls.facebook}login`);
-      const databody = await page.evaluate(() => (document.querySelector('body') as any).innerHTML);
-      console.log('body login::::', databody);
 
       await facebookLogin(page);
-
-      const data2 = await page.evaluate(() => (document.querySelector('body') as any).innerHTML);
-      const data3 = await page.evaluate(() => (document.querySelector('body') as any).innerText);
-      console.log('body logged', data2);
-      console.log('body logged text', data3);
     }
 
     page.goto(urls.facebookMarketPlace);
@@ -54,8 +46,6 @@ export const publishInMarketplace = async (publications: IFBMarketPlacePublicati
     // all dom refs for facebook
     const inputRefs = refObjFromKeys.facebook;
     const inputFile = await page.$(inputRefs.inputFIle);
-    const data = await page.evaluate(() => (document.querySelector('body') as any).innerText);
-    console.log('body create item', data);
     await page.waitForSelector(inputRefs.inputFIle);
 
     const whatsappURL = await urls.getWhatsappMessageURL(`Estoy interesado en este producto "${publication.name}". ¿Aún está disponible?  \n \n ${publication.image}`);
