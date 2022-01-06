@@ -21,7 +21,7 @@ export const login = async (page: Page, loginCredentials: ICredentials, emailRef
   await page.type(passRef, loginCredentials.pass);
   return Promise.all([
     page.click(submitButtonRef),
-    // page.waitForTimeout(3000),
+    page.waitForTimeout(3000),
     page.waitForNavigation(),
   ]);
 };

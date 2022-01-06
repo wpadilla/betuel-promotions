@@ -32,7 +32,7 @@ export const publishInMarketplace = async (publications: IFBMarketPlacePublicati
       page = await browser.newPage();
       overridePermissions(browser, urls.facebook);
       await page.goto(`${urls.facebook}login`);
-      const data2 = await page.evaluate(() => (document.querySelector('body') as any).innerText);
+      const data2 = await page.evaluate(() => (document.querySelector('body') as any).innerHTML);
       console.log('body login', data2);
       await facebookLogin(page);
     }
