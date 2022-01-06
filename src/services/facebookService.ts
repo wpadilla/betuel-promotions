@@ -19,6 +19,7 @@ export const publishInMarketplace = async (publications: IFBMarketPlacePublicati
   let page = lastPage || {} as Page;
   let browser = lastBrowser || {} as Browser;
   try {
+
     if (!lastPage) {
       browser = await puppeteer.launch({
         headless: true, // put false to see how the bot work
@@ -31,6 +32,8 @@ export const publishInMarketplace = async (publications: IFBMarketPlacePublicati
       page = await browser.newPage();
       overridePermissions(browser, urls.facebook);
       await page.goto(`${urls.facebook}login`);
+      const data2 = await page.evaluate(() => (document.querySelector('body') as any).innerText);
+      console.log('body login', data2);
       await facebookLogin(page);
     }
 
@@ -46,8 +49,7 @@ export const publishInMarketplace = async (publications: IFBMarketPlacePublicati
     const inputRefs = refObjFromKeys.facebook;
     const inputFile = await page.$(inputRefs.inputFIle);
     const data = await page.evaluate(() => (document.querySelector('body') as any).innerText);
-    console.log(inputFile, 'body');
-    console.log('what', data);
+    console.log('body create item', data);
     await page.waitForSelector(inputRefs.inputFIle);
 
     const whatsappURL = await urls.getWhatsappMessageURL(`Estoy interesado en este producto "${publication.name}". ¿Aún está disponible?  \n \n ${publication.image}`);
