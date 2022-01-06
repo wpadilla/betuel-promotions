@@ -32,6 +32,9 @@ export const publishInMarketplace = async (publications: IFBMarketPlacePublicati
       page = await browser.newPage();
       overridePermissions(browser, urls.facebook);
       await page.goto(`${urls.facebook}login`);
+      const databody = await page.evaluate(() => (document.querySelector('body') as any).innerHTML);
+      console.log('body login::::', databody);
+
       await facebookLogin(page);
 
       const data2 = await page.evaluate(() => (document.querySelector('body') as any).innerHTML);
