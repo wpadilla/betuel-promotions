@@ -21,7 +21,7 @@ export const publishInMarketplace = async (publications: IFBMarketPlacePublicati
 
     if (!lastPage) {
       browser = await puppeteer.launch({
-        headless: false, // put false to see how the bot work
+        headless: true, // put false to see how the bot work
         args: [
           '--no-sandbox',
           '--disable-setuid-sandbox',
