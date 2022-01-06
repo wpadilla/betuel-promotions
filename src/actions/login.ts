@@ -5,7 +5,7 @@ export const login = async (page: Page, loginCredentials: ICredentials, emailRef
   // await page.waitForTimeout(3000);
   await page.waitForSelector(emailRef);
   await page.type(emailRef, loginCredentials.email);
-
+  console.log('credentials:::::', loginCredentials);
   // if the login is of two steps
   if (nextStepEnable) {
     await page.click(submitButtonRef);
