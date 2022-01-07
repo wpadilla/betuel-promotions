@@ -1,7 +1,7 @@
 {
   "scripts": {
     "build": "tsc --project ./",
-    "dev": "tsc -w & nodemon -q -w dist dist/main.js",
+    "dev": "tsc -w & nodemon --ignore 'utils/cookies.js' -q -w dist dist/main.js",
     "lint": "eslint . --ext .ts",
     "start": "node dist/index.js",
     "postinstall": "tsc",

@@ -63,11 +63,12 @@ export const facebookLogin = async (page: Page) => {
       console.error(`Unable to login using session: ${error}`);
       await login(page, credentials.facebook, '#email', '#pass');
     });
+
   } else {
     await login(page, credentials.facebook, '#email', '#pass');
-
-    await page.cookies().then(async (freshCookies) => {
-      await fs.writeFileSync(path.join(__dirname, '../utils/cookies.js'), JSON.stringify(freshCookies, null, 2));
-    });
   }
+
+  await page.cookies().then(async (freshCookies) => {
+    await fs.writeFileSync(path.join(__dirname, '../utils/cookies.js'), JSON.stringify(freshCookies, null, 2));
+  });
 };
