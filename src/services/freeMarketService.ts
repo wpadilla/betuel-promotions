@@ -94,6 +94,7 @@ ${whatsappURL}
 
           if (pubIndex === publications.length - 1) {
             // responseData.push({ url: publicationUrl, id: publicationId });
+            pubIndex = 0;
             browser.close();
             res.status(200).json({ success: true });
           } else {

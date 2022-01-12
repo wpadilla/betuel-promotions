@@ -18,7 +18,6 @@ export const publishInMarketplace = async (publications: IFBMarketPlacePublicati
   let page = lastPage || {} as Page;
   let browser = lastBrowser || {} as Browser;
   try {
-
     if (!lastPage) {
       browser = await puppeteer.launch({
         headless: true, // put false to see how the bot work
@@ -98,7 +97,9 @@ ${whatsappURL}
 
           // publishing the article
           await page.click(inputRefs.publishButton);
-          await page.waitForTimeout(3000);
+          await page.waitForNavigation();
+          await page.waitForTimeout(1000);
+          // await page.waitForNetworkIdle();
           // await page.evaluate(() =>
           // (document.querySelectorAll('[aria-label="Más"]')[2] as any).click());
           // await page.waitForTimeout(2000);
@@ -115,6 +116,7 @@ ${whatsappURL}
 
           if (pubIndex === publications.length - 1) {
             // responseData.push({ url: publicationUrl, id: publicationId });
+            pubIndex = 0;
             res.status(200).json({ success: true });
             browser.close();
           } else {
