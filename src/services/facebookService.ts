@@ -68,7 +68,7 @@ ${whatsappURL}
           await page.waitForTimeout(2000);
           // selecting Nuevo state
           await page.evaluate(() => {
-            (document.querySelectorAll('[role="menu"] .oajrlxb2 .qzhwtbm6.knvmm38d')[0] as any).click();
+            (document.querySelectorAll('[role="listbox"] .oajrlxb2 .qzhwtbm6.knvmm38d')[0] as any).click();
           });
 
           await page.type(inputRefs.description, productDescription);
@@ -134,3 +134,29 @@ ${whatsappURL}
     handlePublicationError(err, res, 'facebook', () => publishInMarketplace(publications, res, page, browser), browser);
   }
 };
+
+
+// {
+//   "_id":"61b0c6893aca9300088f4dc7",
+//     "description":"ESPECIFICACIONES:\n-Compatible con iOS y Android\n-Recibe y realiza llamadas\n-Notifica redes sociales\n-Corona usca teléfono móvil, interruptor de modo dual, música Bluetooth",
+//     "name":"Bocina Bluetooth Aprueba de Agua ",
+//     "GodWord":"Sonríe, Jesús te ama",
+//     "price":3095,
+//     "cost":1820,
+//     "productImage":"https://storage.googleapis.com/betuel-tech-photos/flyer-1641924091994.png",
+//     "image":"https://storage.googleapis.com/betuel-tech-photos/flyer-1641924091994.png",
+//     "flyerOptions":"{\"width\":277,\"height\":354,\"x\":114,\"y\":23,\"fontSize\":37}",
+//     "__v":0
+// },
+// {
+//   "_id":"61b0c6893aca9300088f4dc7",
+//     "description":"ESPECIFICACIONES:\n-Compatible con iOS y Android\n-Recibe y realiza llamadas\n-Notifica redes sociales\n-Corona usca teléfono móvil, interruptor de modo dual, música Bluetooth",
+//     "name":"Bocina Bluetooth Aprueba de Agua ",
+//     "GodWord":"Sonríe, Jesús te ama",
+//     "price":3095,
+//     "cost":1820,
+//     "productImage":"https://storage.googleapis.com/betuel-tech-photos/flyer-1641924091994.png",
+//     "image":"https://storage.googleapis.com/betuel-tech-photos/flyer-1641924091994.png",
+//     "flyerOptions":"{\"width\":277,\"height\":354,\"x\":114,\"y\":23,\"fontSize\":37}",
+//     "__v":0
+// }
