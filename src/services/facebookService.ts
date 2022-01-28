@@ -55,7 +55,7 @@ export const publishInMarketplace = async (publications: IFBMarketPlacePublicati
     👇👇👇 Puedes pedir este producto por whatsapp presionando este enlace 👇👇👇 \n
 ${whatsappURL}
     \n \n
-     ${publication.GodWord || 'Recuerda que Jesús te Ama'}`;
+${publication.GodWord || 'Recuerda que Jesús te Ama'}`;
     await downloadFile(publication.image,
       async (filePath: string) => {
         try {

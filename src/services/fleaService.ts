@@ -54,7 +54,7 @@ export const publishInFlea = async (publications: IFBMarketPlacePublication[], r
     👇👇👇 Puedes pedir este producto por whatsapp presionando este enlace 👇👇👇 \n
 ${whatsappURL}
     \n \n
-     ${publication.GodWord || 'Recuerda que Jesús te Ama'}`;
+${publication.GodWord || 'Recuerda que Jesús te Ama'}`;
 
     await page.select(inputRefs.categorySelect.selector, inputRefs.categorySelect.value);
     await page.click(inputRefs.state);

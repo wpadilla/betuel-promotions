@@ -46,7 +46,7 @@ export const publishInCorotos = async (publications: IFBMarketPlacePublication[]
     👇👇👇 Puedes pedir este producto por whatsapp presionando este enlace 👇👇👇 \n
 ${whatsappURL}
     \n \n
-     ${publication.GodWord || 'Recuerda que Jesús te Ama'}`;
+${publication.GodWord || 'Recuerda que Jesús te Ama'}`;
 
     await page.type(inputRefs.title, `${publication.name} | Betuel Tech`);
     await page.type(inputRefs.description, productDescription);
