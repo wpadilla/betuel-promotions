@@ -51,7 +51,7 @@ export const loginWithSessionFacebook = async (cookies: any, page: Page) => {
 
 export const facebookLogin = async (page: Page) => {
   // Load cookies from previous session
-  const buffer = await fs.readFileSync(path.join(__dirname, '../utils/cookies.js'));
+  const buffer = await fs.readFileSync(path.join(__dirname, '../data/cookies.json'));
   const data = buffer.toString().replace('"use strict"', '')
     .replace('//# sourceMappingURL=cookies.js.map', '')
     .replace('//# sourceMappingURL=cookies.js.map', '')
@@ -69,6 +69,6 @@ export const facebookLogin = async (page: Page) => {
   }
 
   await page.cookies().then(async (freshCookies) => {
-    await fs.writeFileSync(path.join(__dirname, '../utils/cookies.js'), JSON.stringify(freshCookies, null, 2));
+    await fs.writeFileSync(path.join(__dirname, '../data/cookies.json'), JSON.stringify(freshCookies, null, 2));
   });
 };

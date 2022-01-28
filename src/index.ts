@@ -6,6 +6,8 @@ import facebookRouter from './routes/facebook';
 import corotosRouter from './routes/corotos';
 import fleaRouter from './routes/flea';
 import freeMarketRouter from './routes/freeMarket';
+import whatsappRouter from './routes/whatsapp';
+import instagramRouter from './routes/instagram';
 
 config();
 
@@ -22,8 +24,11 @@ app.get('/products/', (req, res) => {
 
 app.use('/api/facebook', facebookRouter);
 app.use('/api/corotos', corotosRouter);
+
 app.use('/api/flea', fleaRouter);
 app.use('/api/free-market', freeMarketRouter);
+app.use('/api/whatsapp', whatsappRouter);
+app.use('/api/instagram', instagramRouter);
 
 // app.use('*', (req, res) => {
 //   res.send('<h1>Welcome to your simple server! Awesome right</h1>');
