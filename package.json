@@ -29,6 +29,7 @@
     "python-shell": "^3.0.1",
     "qrcode-terminal": "^0.12.0",
     "request": "^2.88.2",
+    "socket.io": "^4.4.1",
     "tinyurl": "^1.1.7",
     "url-minify": "^2.2.13",
     "whatsapp-web.js": "^1.15.4"
@@ -37,6 +38,7 @@
     "@types/node": "^16.11.11",
     "@types/puppeteer": "^5.4.4",
     "@types/qrcode-terminal": "^0.12.0",
+    "@types/socket.io": "^3.0.2",
     "@typescript-eslint/eslint-plugin": "^5.5.0",
     "@typescript-eslint/parser": "^5.5.0",
     "eslint": "^5.16.0",

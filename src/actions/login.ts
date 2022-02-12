@@ -43,7 +43,7 @@ export const loginWithSessionFacebook = async (cookies: any, page: Page) => {
   console.log('Logging into Facebook using cookies');
   await page.setCookie(...cookies);
   // await page.goto(urls.facebook, { waitUntil: 'networkidle2' });
-  await isLoggedInFacebook(page).catch((error) => {
+  await isLoggedInFacebook(page).catch((error: any) => {
     console.error('App is not logged into Facebook');
     throw error;
   });
@@ -59,7 +59,7 @@ export const facebookLogin = async (page: Page) => {
   const cookies = data ? JSON.parse(data) : undefined;
   // Use our cookies to login. If it fails fallback to username and password login.
   if (cookies && Object.keys(cookies).length) {
-    await loginWithSessionFacebook(cookies, page).catch(async (error) => {
+    await loginWithSessionFacebook(cookies, page).catch(async (error: any) => {
       console.error(`Unable to login using session: ${error}`);
       await login(page, credentials.facebook, '#email', '#pass');
     });
