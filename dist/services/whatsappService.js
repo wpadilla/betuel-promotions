@@ -17,6 +17,7 @@ const path_1 = __importDefault(require("path"));
 const fs_1 = __importDefault(require("fs"));
 const whatsapp_web_js_1 = require("whatsapp-web.js");
 const index_1 = require("../index");
+const enums_1 = require("../models/enums");
 let whatsappClient;
 // Path where the session data will be stored
 const SESSION_FILE_PATH = path_1.default.join(__dirname, '/../data/whatsappSession.json');
@@ -47,10 +48,12 @@ const logOut = () => new Promise((resolve) => {
 exports.logOut = logOut;
 const getClient = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        console.log('Getting Whatsapp Client...');
         if (whatsappClient && whatsappClient.info) {
-            console.log('¡Client already exist!');
-            return { client: whatsappClient, initialized: true };
+            console.log(enums_1.AppMessages.CLIENT_EXIST);
+            return { client: whatsappClient, logged: true, initialized: true };
+        }
+        if (whatsappClient) {
+            return { client: whatsappClient, logged: false, initialized: true };
         }
         // // Load the session data if it has been previously saved
         let sessionData;
@@ -59,21 +62,21 @@ const getClient = () => __awaiter(void 0, void 0, void 0, function* () {
             console.log(session, 'session');
             sessionData = JSON.stringify(session) === '{}' ? undefined : session;
         }
+        //
         whatsappClient = new whatsapp_web_js_1.Client({
-            session: sessionData,
+        // session: sessionData,
         });
-        whatsappClient.on('authenticated', (session) => {
-            index_1.SocketIoServer.emit('whatsapp-auth-success', session);
-            console.log('AUTHENTICATED SUCCESSFULLY');
-            sessionData = session;
-            fs_1.default.writeFile(SESSION_FILE_PATH, JSON.stringify(session), (err) => {
-                if (err) {
-                    console.error(err);
-                }
-            });
+        whatsappClient.on(enums_1.WhatsappEvents.ON_AUTHENTICATED, (session) => {
+            console.log(enums_1.AppMessages.AUTHENTICATED);
+            // sessionData = session;
+            // fs.writeFile(SESSION_FILE_PATH, JSON.stringify(session), (err) => {
+            //   if (err) {
+            //     console.error(err);
+            //   }
+            // });
         });
-        whatsappClient.on('auth_failure', (error) => __awaiter(void 0, void 0, void 0, function* () {
-            console.log('AUTHENTICATED FAIL');
+        whatsappClient.on(enums_1.WhatsappEvents.ON_AUTH_FAIL, (error) => __awaiter(void 0, void 0, void 0, function* () {
+            console.log(enums_1.AppMessages.AUTHENTICATION_FAIL);
             yield (0, exports.logOut)();
             setTimeout(() => {
                 index_1.SocketIoServer.emit('whatsapp-auth-fail', { error });
@@ -82,7 +85,8 @@ const getClient = () => __awaiter(void 0, void 0, void 0, function* () {
         return { client: whatsappClient };
     }
     catch (err) {
-        console.log('Error while getting client:', err);
+        console.log(enums_1.AppMessages.ERROR_WHILE_GETTING_WS_CLIENT, err);
+        throw err;
     }
 });
 exports.getClient = getClient;

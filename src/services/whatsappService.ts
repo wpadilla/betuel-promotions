@@ -2,6 +2,7 @@ import path from 'path';
 import fs from 'fs';
 import { Client } from 'whatsapp-web.js';
 import { SocketIoServer } from '../index';
+import { AppMessages, WhatsappEvents } from '../models/enums';
 
 let whatsappClient: Client | any;
 // Path where the session data will be stored
@@ -33,12 +34,13 @@ export const logOut = () => new Promise((resolve) => {
   });
 });
 
-export const getClient = async (): Promise<{ client: Client, initialized?: boolean }> => {
+export const getClient = async (): Promise<{ client: Client, initialized?: boolean, logged?: boolean }> => {
   try {
-    console.log('Getting Whatsapp Client...');
     if (whatsappClient && whatsappClient.info) {
-      console.log('¡Client already exist!');
-      return { client: whatsappClient, initialized: true };
+      console.log(AppMessages.CLIENT_EXIST);
+      return { client: whatsappClient, logged: true, initialized: true };
+    } if (whatsappClient) {
+      return { client: whatsappClient, logged: false, initialized: true };
     }
 
     // // Load the session data if it has been previously saved
@@ -48,24 +50,23 @@ export const getClient = async (): Promise<{ client: Client, initialized?: boole
       console.log(session, 'session');
       sessionData = JSON.stringify(session) === '{}' ? undefined : session;
     }
-
+    //
     whatsappClient = new Client({
-      session: sessionData,
+      // session: sessionData,
     });
 
-    whatsappClient.on('authenticated', (session: any) => {
-      SocketIoServer.emit('whatsapp-auth-success', session);
-      console.log('AUTHENTICATED SUCCESSFULLY');
-      sessionData = session;
-      fs.writeFile(SESSION_FILE_PATH, JSON.stringify(session), (err) => {
-        if (err) {
-          console.error(err);
-        }
-      });
+    whatsappClient.on(WhatsappEvents.ON_AUTHENTICATED, (session: any) => {
+      console.log(AppMessages.AUTHENTICATED);
+      // sessionData = session;
+      // fs.writeFile(SESSION_FILE_PATH, JSON.stringify(session), (err) => {
+      //   if (err) {
+      //     console.error(err);
+      //   }
+      // });
     });
 
-    whatsappClient.on('auth_failure', async (error: any) => {
-      console.log('AUTHENTICATED FAIL');
+    whatsappClient.on(WhatsappEvents.ON_AUTH_FAIL, async (error: any) => {
+      console.log(AppMessages.AUTHENTICATION_FAIL);
       await logOut();
       setTimeout(() => {
         SocketIoServer.emit('whatsapp-auth-fail', { error });
@@ -74,7 +75,8 @@ export const getClient = async (): Promise<{ client: Client, initialized?: boole
 
     return { client: whatsappClient };
   } catch (err) {
-    console.log('Error while getting client:', err);
+    console.log(AppMessages.ERROR_WHILE_GETTING_WS_CLIENT, err);
+    throw err;
   }
 };
 

@@ -12,43 +12,42 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const whatsappService_1 = require("../services/whatsappService");
 const index_1 = require("../index");
+const enums_1 = require("../models/enums");
 const whatsappRouter = (0, express_1.Router)();
 whatsappRouter.post('', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { start } = req.body;
         if (!start) {
             yield (0, whatsappService_1.logOut)();
-            return res.status(200).send({ status: 'logged out' });
+            // return res.status(200).send({ status: 'logged out' });
         }
-        const { client, initialized } = yield (0, whatsappService_1.getClient)();
-        client.on('qr', (qrCode) => {
+        index_1.SocketIoServer.emit(enums_1.WhatsappEvents.EMIT_LOADING, { loading: true });
+        const { client, initialized, logged } = yield (0, whatsappService_1.getClient)();
+        if (initialized) {
+            index_1.SocketIoServer.emit(enums_1.WhatsappEvents.EMIT_LOADING, { loading: false });
+            return res.status(200).send({ status: 'started', initialized, logged });
+        }
+        client.on(enums_1.WhatsappEvents.ON_QR, (qrCode) => {
             console.log('qr', qrCode);
-            index_1.SocketIoServer.emit('whatsapp-qr-code', { qrCode });
+            index_1.SocketIoServer.emit(enums_1.WhatsappEvents.EMIT_QR, { qrCode });
         });
-        client.on('disconnected', () => {
+        client.on(enums_1.WhatsappEvents.ON_DISCONNECTED, () => {
             console.log('DISCONNECTED!');
             (0, whatsappService_1.logOut)();
         });
-        client.on('ready', () => __awaiter(void 0, void 0, void 0, function* () {
+        client.on(enums_1.WhatsappEvents.ON_READY, () => __awaiter(void 0, void 0, void 0, function* () {
             console.log('ready');
-            index_1.SocketIoServer.emit('whatsapp-ready', { status: 'ready' });
+            index_1.SocketIoServer.emit(enums_1.WhatsappEvents.EMIT_READY, { status: 'ready' });
         }));
-        client.on('message', (message) => {
+        client.on(enums_1.WhatsappEvents.ON_MESSAGE, (message) => {
             if (message.body === 'ping') {
-                console.log(message.from);
                 message.reply('pong');
             }
         });
-        index_1.SocketIoServer.emit('whatsapp-loading', { loading: true });
-        if (!initialized) {
-            console.log('klk initializing');
-            yield client.initialize();
-            index_1.SocketIoServer.emit('whatsapp-loading', { loading: false });
-        }
-        else {
-            index_1.SocketIoServer.emit('whatsapp-loading', { loading: false });
-        }
-        res.status(200).send({ status: !initialized ? 'starting...' : 'started', initialized });
+        index_1.SocketIoServer.emit(enums_1.WhatsappEvents.EMIT_LOADING, { loading: true });
+        yield client.initialize();
+        index_1.SocketIoServer.emit(enums_1.WhatsappEvents.EMIT_LOADING, { loading: false });
+        res.status(200).send({ status: 'starting...', initialized, logged });
     }
     catch (err) {
         console.log(err);
@@ -58,10 +57,10 @@ whatsappRouter.post('', (req, res) => __awaiter(void 0, void 0, void 0, function
 whatsappRouter.post('/message', (req, res) => {
     try {
         console.log('contacts', req.body.contacts);
-        index_1.SocketIoServer.emit('whatsapp-loading', { loading: true });
+        index_1.SocketIoServer.emit(enums_1.WhatsappEvents.EMIT_LOADING, { loading: true });
         (0, whatsappService_1.sendMessages)(req.body.contacts, 5000).then((data) => {
             index_1.SocketIoServer.emit('whatsapp-messages-end', { data });
-            index_1.SocketIoServer.emit('whatsapp-loading', { loading: false });
+            index_1.SocketIoServer.emit(enums_1.WhatsappEvents.EMIT_LOADING, { loading: false });
         });
         res.status(200).send({ status: 'sending...' });
     }
