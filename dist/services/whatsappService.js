@@ -46,10 +46,11 @@ const logOut = () => new Promise((resolve) => {
     }));
 });
 exports.logOut = logOut;
-const getClient = () => __awaiter(void 0, void 0, void 0, function* () {
+const getClient = (clientId) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         if (whatsappClient && whatsappClient.info) {
             console.log(enums_1.AppMessages.CLIENT_EXIST);
+            index_1.SocketIoServer.emit(enums_1.WhatsappEvents.EMIT_AUTH_SUCCESS, { logged: true });
             return { client: whatsappClient, logged: true, initialized: true };
         }
         if (whatsappClient) {
@@ -64,10 +65,13 @@ const getClient = () => __awaiter(void 0, void 0, void 0, function* () {
         }
         //
         whatsappClient = new whatsapp_web_js_1.Client({
-        // session: sessionData,
+            // session: sessionData,
+            // eslint-disable-next-line no-undef
+            authStrategy: new whatsapp_web_js_1.LocalAuth({ clientId, dataPath: './dist' }),
         });
         whatsappClient.on(enums_1.WhatsappEvents.ON_AUTHENTICATED, (session) => {
             console.log(enums_1.AppMessages.AUTHENTICATED);
+            index_1.SocketIoServer.emit(enums_1.WhatsappEvents.EMIT_AUTH_SUCCESS, { logged: true });
             // sessionData = session;
             // fs.writeFile(SESSION_FILE_PATH, JSON.stringify(session), (err) => {
             //   if (err) {

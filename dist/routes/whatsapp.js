@@ -16,13 +16,13 @@ const enums_1 = require("../models/enums");
 const whatsappRouter = (0, express_1.Router)();
 whatsappRouter.post('', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { start } = req.body;
+        const { start, clientId } = req.body;
         if (!start) {
             yield (0, whatsappService_1.logOut)();
             // return res.status(200).send({ status: 'logged out' });
         }
         index_1.SocketIoServer.emit(enums_1.WhatsappEvents.EMIT_LOADING, { loading: true });
-        const { client, initialized, logged } = yield (0, whatsappService_1.getClient)();
+        const { client, initialized, logged } = yield (0, whatsappService_1.getClient)(clientId);
         if (initialized) {
             index_1.SocketIoServer.emit(enums_1.WhatsappEvents.EMIT_LOADING, { loading: false });
             return res.status(200).send({ status: 'started', initialized, logged });

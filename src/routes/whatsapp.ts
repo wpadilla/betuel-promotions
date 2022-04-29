@@ -4,40 +4,38 @@ import {
 } from '../services/whatsappService';
 import { SocketIoServer } from '../index';
 import { WhatsappEvents } from '../models/enums';
+import { WhatsappResponse } from '../models/WhatsappModels';
 
 const whatsappRouter = Router();
 
 whatsappRouter.post('', async (req, res) => {
   try {
-    const { start } = req.body;
+    const { start, clientId } = req.body;
 
     if (!start) {
       await logOut();
-      // return res.status(200).send({ status: 'logged out' });
+      return res.status(200).send(new WhatsappResponse({ status: 'logged out' }));
     }
 
-    SocketIoServer.emit(WhatsappEvents.EMIT_LOADING, { loading: true });
+    SocketIoServer.emit(WhatsappEvents.EMIT_LOADING, new WhatsappResponse({ loading: true }));
 
-    const { client, initialized, logged } = await getClient();
+    const { client, status } = await getClient(clientId);
 
-    if (initialized) {
+    if (status !== 'starting') {
       SocketIoServer.emit(WhatsappEvents.EMIT_LOADING, { loading: false });
-      return res.status(200).send({ status: 'started', initialized, logged });
+      return res.status(200).send(new WhatsappResponse({ status }));
     }
 
     client.on(WhatsappEvents.ON_QR, (qrCode) => {
-      console.log('qr', qrCode);
-      SocketIoServer.emit(WhatsappEvents.EMIT_QR, { qrCode });
+      SocketIoServer.emit(WhatsappEvents.EMIT_QR, new WhatsappResponse({ qrCode }));
     });
 
     client.on(WhatsappEvents.ON_DISCONNECTED, () => {
       console.log('DISCONNECTED!');
-      logOut();
     });
 
     client.on(WhatsappEvents.ON_READY, async () => {
-      console.log('ready');
-      SocketIoServer.emit(WhatsappEvents.EMIT_READY, { status: 'ready' });
+      SocketIoServer.emit(WhatsappEvents.EMIT_READY, new WhatsappResponse({ status: 'ready' }));
     });
 
     client.on(WhatsappEvents.ON_MESSAGE, (message: any) => {
@@ -46,20 +44,19 @@ whatsappRouter.post('', async (req, res) => {
       }
     });
 
-    SocketIoServer.emit(WhatsappEvents.EMIT_LOADING, { loading: true });
-    await client.initialize();
-    SocketIoServer.emit(WhatsappEvents.EMIT_LOADING, { loading: false });
+    SocketIoServer.emit(WhatsappEvents.EMIT_LOADING, new WhatsappResponse({ loading: true }));
+    client.initialize().then(() => {
+      SocketIoServer.emit(WhatsappEvents.EMIT_LOADING, new WhatsappResponse({ loading: false }));
+    });
 
-    res.status(200).send({ status: 'starting...', initialized, logged });
-  } catch (err) {
-    console.log(err);
-    res.status(500).json({ error: (err as any).message });
+    res.status(200).send(new WhatsappResponse({ status }));
+  } catch (err: Error | any) {
+    res.status(500).json({ error: err.message });
   }
 });
 
 whatsappRouter.post('/message', (req, res) => {
   try {
-    console.log('contacts', req.body.contacts);
 
     SocketIoServer.emit(WhatsappEvents.EMIT_LOADING, { loading: true });
     sendMessages(req.body.contacts as IWhatsappPerson[], 5000).then((data) => {

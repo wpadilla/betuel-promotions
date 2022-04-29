@@ -15,6 +15,7 @@ enum WhatsappEvents {
     EMIT_LOADING = 'whatsapp-loading',
     EMIT_QR = 'whatsapp-qr-code',
     EMIT_READY = 'whatsapp-ready',
+    EMIT_AUTH_SUCCESS = 'whatsapp-auth-success',
 }
 
 export {

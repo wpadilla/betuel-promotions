@@ -1,12 +1,14 @@
 import path from 'path';
 import fs from 'fs';
-import { Client } from 'whatsapp-web.js';
+import { Client, LocalAuth } from 'whatsapp-web.js';
 import { SocketIoServer } from '../index';
 import { AppMessages, WhatsappEvents } from '../models/enums';
+import { WhatsappResponse } from '../models/WhatsappModels';
 
 let whatsappClient: Client | any;
 // Path where the session data will be stored
 const SESSION_FILE_PATH = path.join(__dirname, '/../data/whatsappSession.json');
+const WS_DATA_PATH = './dist';
 
 export const logOut = () => new Promise((resolve) => {
   SocketIoServer.emit('whatsapp-loading', { loading: true });
@@ -34,35 +36,35 @@ export const logOut = () => new Promise((resolve) => {
   });
 });
 
-export const getClient = async (): Promise<{ client: Client, initialized?: boolean, logged?: boolean }> => {
+class ClientResponse extends WhatsappResponse {
+  client: Client = {} as any;
+
+  constructor(data: ClientResponse) {
+    super(data);
+    this.client = data.client;
+  }
+}
+
+export const getClient = async (clientId: string): Promise<ClientResponse> => {
   try {
     if (whatsappClient && whatsappClient.info) {
       console.log(AppMessages.CLIENT_EXIST);
-      return { client: whatsappClient, logged: true, initialized: true };
-    } if (whatsappClient) {
-      return { client: whatsappClient, logged: false, initialized: true };
+      SocketIoServer.emit(WhatsappEvents.EMIT_AUTH_SUCCESS, new WhatsappResponse({ status: 'logged' }));
+      return new ClientResponse({ client: whatsappClient, status: 'logged' });
+    }
+    if (whatsappClient) {
+      return new ClientResponse({ client: whatsappClient, status: 'started' });
     }
 
-    // // Load the session data if it has been previously saved
-    let sessionData;
-    if (fs.existsSync(SESSION_FILE_PATH)) {
-      const session = require(SESSION_FILE_PATH);
-      console.log(session, 'session');
-      sessionData = JSON.stringify(session) === '{}' ? undefined : session;
-    }
-    //
+    // creation of the client
     whatsappClient = new Client({
-      // session: sessionData,
+      // local auth to store the user data in local for multi-device whatsapp
+      authStrategy: new LocalAuth({ clientId, dataPath: WS_DATA_PATH }),
     });
 
-    whatsappClient.on(WhatsappEvents.ON_AUTHENTICATED, (session: any) => {
+    whatsappClient.on(WhatsappEvents.ON_AUTHENTICATED, () => {
       console.log(AppMessages.AUTHENTICATED);
-      // sessionData = session;
-      // fs.writeFile(SESSION_FILE_PATH, JSON.stringify(session), (err) => {
-      //   if (err) {
-      //     console.error(err);
-      //   }
-      // });
+      SocketIoServer.emit(WhatsappEvents.EMIT_AUTH_SUCCESS, new WhatsappResponse({ status: 'logged' }));
     });
 
     whatsappClient.on(WhatsappEvents.ON_AUTH_FAIL, async (error: any) => {
@@ -73,7 +75,7 @@ export const getClient = async (): Promise<{ client: Client, initialized?: boole
       }, 1000);
     });
 
-    return { client: whatsappClient };
+    return new ClientResponse({ client: whatsappClient, status: 'starting' });
   } catch (err) {
     console.log(AppMessages.ERROR_WHILE_GETTING_WS_CLIENT, err);
     throw err;
