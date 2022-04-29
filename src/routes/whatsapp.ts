@@ -27,6 +27,7 @@ whatsappRouter.post('', async (req, res) => {
     }
 
     client.on(WhatsappEvents.ON_QR, (qrCode) => {
+      console.log('qr code', qrCode);
       SocketIoServer.emit(WhatsappEvents.EMIT_QR, new WhatsappResponse({ qrCode }));
     });
 
@@ -35,10 +36,12 @@ whatsappRouter.post('', async (req, res) => {
     });
 
     client.on(WhatsappEvents.ON_READY, async () => {
+      console.log('ready!')
       SocketIoServer.emit(WhatsappEvents.EMIT_READY, new WhatsappResponse({ status: 'ready' }));
     });
 
     client.on(WhatsappEvents.ON_MESSAGE, (message: any) => {
+      console.log('message', message)
       if (message.body === 'ping') {
         message.reply('pong');
       }

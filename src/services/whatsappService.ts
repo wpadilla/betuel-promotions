@@ -52,9 +52,9 @@ export const getClient = async (clientId: string): Promise<ClientResponse> => {
       SocketIoServer.emit(WhatsappEvents.EMIT_AUTH_SUCCESS, new WhatsappResponse({ status: 'logged' }));
       return new ClientResponse({ client: whatsappClient, status: 'logged' });
     }
-    if (whatsappClient) {
-      return new ClientResponse({ client: whatsappClient, status: 'started' });
-    }
+    // if (whatsappClient) {
+    //   return new ClientResponse({ client: whatsappClient, status: 'started' });
+    // }
 
     // creation of the client
     whatsappClient = new Client({
