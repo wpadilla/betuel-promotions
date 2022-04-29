@@ -13,52 +13,52 @@ const express_1 = require("express");
 const whatsappService_1 = require("../services/whatsappService");
 const index_1 = require("../index");
 const enums_1 = require("../models/enums");
+const WhatsappModels_1 = require("../models/WhatsappModels");
 const whatsappRouter = (0, express_1.Router)();
 whatsappRouter.post('', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { start, clientId } = req.body;
+        const { start, sessionId } = req.body;
         if (!start) {
             yield (0, whatsappService_1.logOut)();
-            // return res.status(200).send({ status: 'logged out' });
+            return res.status(200).send(new WhatsappModels_1.WhatsappResponse({ status: 'logged out' }));
         }
-        index_1.SocketIoServer.emit(enums_1.WhatsappEvents.EMIT_LOADING, { loading: true });
-        const { client, initialized, logged } = yield (0, whatsappService_1.getClient)(clientId);
-        if (initialized) {
+        index_1.SocketIoServer.emit(enums_1.WhatsappEvents.EMIT_LOADING, new WhatsappModels_1.WhatsappResponse({ loading: true }));
+        const { client, status } = yield (0, whatsappService_1.getClient)(sessionId);
+        if (status !== 'starting') {
             index_1.SocketIoServer.emit(enums_1.WhatsappEvents.EMIT_LOADING, { loading: false });
-            return res.status(200).send({ status: 'started', initialized, logged });
+            return res.status(200).send(new WhatsappModels_1.WhatsappResponse({ status }));
         }
         client.on(enums_1.WhatsappEvents.ON_QR, (qrCode) => {
-            console.log('qr', qrCode);
-            index_1.SocketIoServer.emit(enums_1.WhatsappEvents.EMIT_QR, { qrCode });
+            console.log('qr code', qrCode);
+            index_1.SocketIoServer.emit(enums_1.WhatsappEvents.EMIT_QR, new WhatsappModels_1.WhatsappResponse({ qrCode }));
         });
         client.on(enums_1.WhatsappEvents.ON_DISCONNECTED, () => {
             console.log('DISCONNECTED!');
-            (0, whatsappService_1.logOut)();
         });
         client.on(enums_1.WhatsappEvents.ON_READY, () => __awaiter(void 0, void 0, void 0, function* () {
-            console.log('ready');
-            index_1.SocketIoServer.emit(enums_1.WhatsappEvents.EMIT_READY, { status: 'ready' });
+            console.log('ready!');
+            index_1.SocketIoServer.emit(enums_1.WhatsappEvents.EMIT_READY, new WhatsappModels_1.WhatsappResponse({ status: 'ready' }));
         }));
         client.on(enums_1.WhatsappEvents.ON_MESSAGE, (message) => {
             if (message.body === 'ping') {
                 message.reply('pong');
             }
         });
-        index_1.SocketIoServer.emit(enums_1.WhatsappEvents.EMIT_LOADING, { loading: true });
-        yield client.initialize();
-        index_1.SocketIoServer.emit(enums_1.WhatsappEvents.EMIT_LOADING, { loading: false });
-        res.status(200).send({ status: 'starting...', initialized, logged });
+        index_1.SocketIoServer.emit(enums_1.WhatsappEvents.EMIT_LOADING, new WhatsappModels_1.WhatsappResponse({ loading: true }));
+        client.initialize().then(() => {
+            index_1.SocketIoServer.emit(enums_1.WhatsappEvents.EMIT_LOADING, new WhatsappModels_1.WhatsappResponse({ loading: false }));
+        });
+        res.status(200).send(new WhatsappModels_1.WhatsappResponse({ status }));
     }
     catch (err) {
-        console.log(err);
         res.status(500).json({ error: err.message });
     }
 }));
 whatsappRouter.post('/message', (req, res) => {
     try {
-        console.log('contacts', req.body.contacts);
+        const { contacts, sessionId } = req.body;
         index_1.SocketIoServer.emit(enums_1.WhatsappEvents.EMIT_LOADING, { loading: true });
-        (0, whatsappService_1.sendMessages)(req.body.contacts, 5000).then((data) => {
+        (0, whatsappService_1.sendMessages)(sessionId, contacts, 5000).then((data) => {
             index_1.SocketIoServer.emit('whatsapp-messages-end', { data });
             index_1.SocketIoServer.emit(enums_1.WhatsappEvents.EMIT_LOADING, { loading: false });
         });

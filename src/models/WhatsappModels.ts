@@ -1,5 +1,8 @@
-export type WhatsappResponseStatusTypes = 'ready' | 'starting' | 'started' | 'logged out' | 'logged';
+import { Client } from "whatsapp-web.js";
 
+export type WhatsappResponseStatusTypes = 'ready' | 'starting' | 'started' | 'logged out' | 'logged';
+export type WhatsappSessionTypes = 'wpadilla' | 'betueltgroup' | 'betueltravel';
+export type IWhatsappClients = {[N in WhatsappSessionTypes]: Client | any };
 // responsde object for whatsapp endpoint
 export class WhatsappResponse {
     loading?: boolean = false;

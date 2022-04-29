@@ -10,7 +10,7 @@ const whatsappRouter = Router();
 
 whatsappRouter.post('', async (req, res) => {
   try {
-    const { start, clientId } = req.body;
+    const { start, sessionId } = req.body;
 
     if (!start) {
       await logOut();
@@ -19,7 +19,7 @@ whatsappRouter.post('', async (req, res) => {
 
     SocketIoServer.emit(WhatsappEvents.EMIT_LOADING, new WhatsappResponse({ loading: true }));
 
-    const { client, status } = await getClient(clientId);
+    const { client, status } = await getClient(sessionId);
 
     if (status !== 'starting') {
       SocketIoServer.emit(WhatsappEvents.EMIT_LOADING, { loading: false });
@@ -36,12 +36,11 @@ whatsappRouter.post('', async (req, res) => {
     });
 
     client.on(WhatsappEvents.ON_READY, async () => {
-      console.log('ready!')
+      console.log('ready!');
       SocketIoServer.emit(WhatsappEvents.EMIT_READY, new WhatsappResponse({ status: 'ready' }));
     });
 
     client.on(WhatsappEvents.ON_MESSAGE, (message: any) => {
-      console.log('message', message)
       if (message.body === 'ping') {
         message.reply('pong');
       }
@@ -60,9 +59,9 @@ whatsappRouter.post('', async (req, res) => {
 
 whatsappRouter.post('/message', (req, res) => {
   try {
-
+    const { contacts, sessionId } = req.body;
     SocketIoServer.emit(WhatsappEvents.EMIT_LOADING, { loading: true });
-    sendMessages(req.body.contacts as IWhatsappPerson[], 5000).then((data) => {
+    sendMessages(sessionId, contacts as IWhatsappPerson[], 5000).then((data) => {
       SocketIoServer.emit('whatsapp-messages-end', { data });
       SocketIoServer.emit(WhatsappEvents.EMIT_LOADING, { loading: false });
     });
