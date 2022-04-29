@@ -60,6 +60,9 @@ export const getClient = async (clientId: string): Promise<ClientResponse> => {
     whatsappClient = new Client({
       // local auth to store the user data in local for multi-device whatsapp
       authStrategy: new LocalAuth({ clientId, dataPath: WS_DATA_PATH }),
+      puppeteer: {
+        args: ['--no-sandbox', '--disable-setuid-sandbox'],
+      },
     });
 
     whatsappClient.on(WhatsappEvents.ON_AUTHENTICATED, () => {
