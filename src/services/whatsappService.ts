@@ -1,9 +1,11 @@
 import path from 'path';
 import fs from 'fs';
-import { Client, LocalAuth } from 'whatsapp-web.js';
+import { Client, LocalAuth, MessageMedia } from 'whatsapp-web.js';
 import { SocketIoServer } from '../index';
 import { AppMessages, WhatsappEvents } from '../models/enums';
-import { IWhatsappClients, WhatsappResponse, WhatsappSessionTypes } from '../models/WhatsappModels';
+import {
+  IWhatsappClients, IWhatsappMessage, WhatsappResponse, WhatsappSessionTypes,
+} from '../models/WhatsappModels';
 
 const whatsappClient: IWhatsappClients = {} as IWhatsappClients;
 // Path where the session data will be stored
@@ -95,19 +97,40 @@ export interface IWhatsappPerson {
     lastName: string,
 }
 
-export const sendMessages = async (sessionId: WhatsappSessionTypes, persons: IWhatsappPerson[], delay: number): Promise<any> => {
+export const sendMessages = async (sessionId: WhatsappSessionTypes, persons: IWhatsappPerson[], message: IWhatsappMessage, delay: number): Promise<any> => {
   try {
     if (whatsappClient[sessionId]) {
-      return Promise.all(persons.map((person, order) => new Promise((resolve) => setTimeout(async () => {
-        try {
-          await whatsappClient[sessionId].sendMessage(`1${person.number}@c.us`, `Hola ${person.firstName}, quiero hacer amigos, me llamo Betuel y me dicen Tech, ¿como te llamas?`);
-          SocketIoServer.emit('whatsapp-message-sent', person);
-          resolve({ status: 'success', person });
-        } catch (err) {
-          SocketIoServer.emit('whatsapp-message-fail', { error: (err as any).message });
-          resolve({ status: 'fail', person, error: (err as any).message });
-        }
-      }, delay * order))));
+      return Promise.all(persons.map((person, order) => new Promise(
+        (resolve) => setTimeout(async () => {
+          try {
+            let { text, photo } = message;
+            if (text) {
+              Object.keys(person).forEach((key) => {
+                // @ts-ignore
+                text = text.replace(`@${key}`, (person as any)[key]);
+              });
+            }
+
+            const chatId = `1${person.number}@c.us`;
+            if (photo) {
+              const foto = photo.split(',')[1];
+
+              // const chat = await whatsappClient[sessionId].getChatById(chatId);
+              const media = new MessageMedia('image/png', foto);
+              await whatsappClient[sessionId].sendMessage(chatId, media, { caption: text });
+              // const ress = await chat.sendMessage(media, { caption: text });
+              console.log('segundo console');
+            } else {
+              await whatsappClient[sessionId].sendMessage(chatId, text);
+            }
+            SocketIoServer.emit('whatsapp-message-sent', person);
+            resolve({ status: 'success', person });
+          } catch (err) {
+            SocketIoServer.emit('whatsapp-message-fail', { error: (err as any).message });
+            resolve({ status: 'fail', person, error: (err as any).message });
+          }
+        }, delay * order),
+      )));
     }
 
     return new Promise(() => ({ error: 'No client found' }));

@@ -32,8 +32,8 @@ exports.SocketIoServer.on('connection', (socket) => {
     throw err;
 });
 app.use((0, cors_1.default)());
-app.use(body_parser_1.default.json());
-app.use(body_parser_1.default.urlencoded({ extended: true }));
+app.use(body_parser_1.default.json({ limit: '50mb' }));
+app.use(body_parser_1.default.urlencoded({ extended: true, limit: '50mb', parameterLimit: 50000 }));
 // app.use(express.static('public'));
 app.get('/products/', (req, res) => {
     res.json({ msg: 'This is CORS-enabled for all origins!' });

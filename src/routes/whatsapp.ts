@@ -59,9 +59,9 @@ whatsappRouter.post('', async (req, res) => {
 
 whatsappRouter.post('/message', (req, res) => {
   try {
-    const { contacts, sessionId } = req.body;
+    const { contacts, sessionId, message } = req.body;
     SocketIoServer.emit(WhatsappEvents.EMIT_LOADING, { loading: true });
-    sendMessages(sessionId, contacts as IWhatsappPerson[], 5000).then((data) => {
+    sendMessages(sessionId, contacts as IWhatsappPerson[], message, 5000).then((data) => {
       SocketIoServer.emit('whatsapp-messages-end', { data });
       SocketIoServer.emit(WhatsappEvents.EMIT_LOADING, { loading: false });
     });

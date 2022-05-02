@@ -18,7 +18,7 @@ const whatsapp_web_js_1 = require("whatsapp-web.js");
 const index_1 = require("../index");
 const enums_1 = require("../models/enums");
 const WhatsappModels_1 = require("../models/WhatsappModels");
-let whatsappClient = {};
+const whatsappClient = {};
 // Path where the session data will be stored
 const SESSION_FILE_PATH = path_1.default.join(__dirname, '/../data/whatsappSession.json');
 const WS_DATA_PATH = './dist';
@@ -94,12 +94,30 @@ const getClient = (sessionId) => __awaiter(void 0, void 0, void 0, function* () 
     }
 });
 exports.getClient = getClient;
-const sendMessages = (sessionId, persons, delay) => __awaiter(void 0, void 0, void 0, function* () {
+const sendMessages = (sessionId, persons, message, delay) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         if (whatsappClient[sessionId]) {
             return Promise.all(persons.map((person, order) => new Promise((resolve) => setTimeout(() => __awaiter(void 0, void 0, void 0, function* () {
                 try {
-                    yield whatsappClient[sessionId].sendMessage(`1${person.number}@c.us`, `Hola ${person.firstName}, quiero hacer amigos, me llamo Betuel y me dicen Tech, ¿como te llamas?`);
+                    let { text, photo } = message;
+                    if (text) {
+                        Object.keys(person).forEach((key) => {
+                            // @ts-ignore
+                            text = text.replace(`@${key}`, person[key]);
+                        });
+                    }
+                    const chatId = `1${person.number}@c.us`;
+                    if (photo) {
+                        const foto = photo.split(',')[1];
+                        // const chat = await whatsappClient[sessionId].getChatById(chatId);
+                        const media = new whatsapp_web_js_1.MessageMedia('image/png', foto);
+                        yield whatsappClient[sessionId].sendMessage(chatId, media, { caption: text });
+                        // const ress = await chat.sendMessage(media, { caption: text });
+                        console.log('segundo console');
+                    }
+                    else {
+                        yield whatsappClient[sessionId].sendMessage(chatId, text);
+                    }
                     index_1.SocketIoServer.emit('whatsapp-message-sent', person);
                     resolve({ status: 'success', person });
                 }
