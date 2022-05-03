@@ -104,13 +104,13 @@ ${whatsappURL}
             }
             catch (err) {
                 console.log('Error Second Try Catch: ', err);
-                (0, errors_1.handlePublicationError)(err, res, 'freeMarket', () => (0, exports.publishInFreeMarket)(publications, res, page, browser), browser);
+                (0, errors_1.handlePublicationError)(err, 'freeMarket', () => (0, exports.publishInFreeMarket)(publications, res, page, browser), browser);
             }
         }));
     }
     catch (err) {
         console.log('Error First Try Catch: ', err);
-        (0, errors_1.handlePublicationError)(err, res, 'freeMarket', () => (0, exports.publishInFreeMarket)(publications, res, page, browser), browser);
+        (0, errors_1.handlePublicationError)(err, 'freeMarket', () => (0, exports.publishInFreeMarket)(publications, res, page, browser), browser);
     }
 });
 exports.publishInFreeMarket = publishInFreeMarket;

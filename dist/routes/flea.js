@@ -11,11 +11,16 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const fleaService_1 = require("../services/fleaService");
+const index_1 = require("../index");
+const enums_1 = require("../models/enums");
+const common_1 = require("../models/common");
+const ecommerce_1 = require("../utils/ecommerce");
 const fleaRouter = (0, express_1.Router)();
 fleaRouter.post('', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const data = req.body;
-        yield (0, fleaService_1.publishInFlea)([...data], res);
+        (0, fleaService_1.publishInFlea)([...data]);
+        index_1.SocketIoServer.emit(enums_1.EcommerceEvents.EMIT_PUBLISHING, new common_1.ECommerceResponse({ status: 'publishing', ecommerce: ecommerce_1.availableEcommerce.flea }));
     }
     catch (err) {
         res.status(500).json({ err });

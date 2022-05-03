@@ -18,7 +18,15 @@ enum WhatsappEvents {
     EMIT_AUTH_SUCCESS = 'whatsapp-auth-success',
 }
 
+enum EcommerceEvents {
+    EMIT_PUBLISHING = 'ecommerce-publishing',
+    EMIT_PUBLISHED = 'ecommerce-item-published',
+    EMIT_COMPLETED = 'ecommerce-completed',
+    EMIT_FAILED = 'ecommerce-failed',
+}
+
 export {
   AppMessages,
   WhatsappEvents,
+  EcommerceEvents,
 };

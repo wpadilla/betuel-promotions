@@ -1,4 +1,4 @@
-import { Client } from "whatsapp-web.js";
+import { Client } from 'whatsapp-web.js';
 
 export type WhatsappResponseStatusTypes = 'ready' | 'starting' | 'started' | 'logged out' | 'logged';
 export type WhatsappSessionTypes = 'wpadilla' | 'betueltgroup' | 'betueltravel';

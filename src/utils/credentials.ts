@@ -23,3 +23,5 @@ export const credentials: { [N in EcommerceTypes] : ICredentials } = {
     pass: 'washicolesten09', // fb password
   },
 };
+
+

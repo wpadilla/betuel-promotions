@@ -16,14 +16,17 @@ exports.publishInMarketplace = void 0;
 const puppeteer_1 = __importDefault(require("puppeteer"));
 const urls_1 = __importDefault(require("../utils/urls"));
 const download_file_1 = __importDefault(require("../utils/download-file"));
+const common_1 = require("../models/common");
 const permissions_1 = require("../actions/permissions");
 const login_1 = require("../actions/login");
 const DOMRefs_1 = require("../utils/DOMRefs");
 const errors_1 = require("../utils/errors");
+const index_1 = require("../index");
+const enums_1 = require("../models/enums");
+const ecommerce_1 = require("../utils/ecommerce");
 let pubIndex = 0;
-const responseData = [];
 const defaultTags = 'Betuel Tech\n Betuel\n Dios\n Cristo\n tecnologia\n accesorios\n wireless\n bluetooth\n inalambrico\n acesorios de celulares\n audifonos\n bocina\n sonido\n entretenimiento\n oferta\n barato\n calidad\n';
-const publishInMarketplace = (publications, res, lastPage, lastBrowser) => __awaiter(void 0, void 0, void 0, function* () {
+const publishInMarketplace = (publications, lastPage, lastBrowser) => __awaiter(void 0, void 0, void 0, function* () {
     const publication = publications[pubIndex];
     const isHeadless = publications.length <= 1;
     let page = lastPage || {};
@@ -113,24 +116,37 @@ ${publication.GodWord || 'Recuerda que Jesús te Ama'}`;
                 if (pubIndex === publications.length - 1) {
                     // responseData.push({ url: publicationUrl, id: publicationId });
                     pubIndex = 0;
-                    res.status(200).json({ success: true });
+                    index_1.SocketIoServer.emit(enums_1.EcommerceEvents.EMIT_PUBLISHED, new common_1.ECommerceResponse({
+                        publication,
+                        status: 'published',
+                        ecommerce: ecommerce_1.availableEcommerce.facebook,
+                    }));
+                    index_1.SocketIoServer.emit(enums_1.EcommerceEvents.EMIT_COMPLETED, new common_1.ECommerceResponse({
+                        publication,
+                        status: 'completed',
+                        ecommerce: ecommerce_1.availableEcommerce.facebook,
+                    }));
                     browser.close();
                 }
                 else {
                     pubIndex += 1;
-                    // responseData.push({ url: publicationUrl, id: publicationId });
-                    (0, exports.publishInMarketplace)(publications, res, page, browser);
+                    index_1.SocketIoServer.emit(enums_1.EcommerceEvents.EMIT_PUBLISHED, new common_1.ECommerceResponse({
+                        publication,
+                        status: 'published',
+                        ecommerce: ecommerce_1.availableEcommerce.facebook,
+                    }));
+                    (0, exports.publishInMarketplace)(publications, page, browser);
                 }
             }
             catch (err) {
                 console.log('Error Second Try Catch: ', err);
-                (0, errors_1.handlePublicationError)(err, res, 'facebook', () => (0, exports.publishInMarketplace)(publications, res, page, browser), browser);
+                (0, errors_1.handlePublicationError)(err, ecommerce_1.availableEcommerce.facebook, () => (0, exports.publishInMarketplace)(publications, page, browser), browser);
             }
         }));
     }
     catch (err) {
         console.log('Error First Try Catch: ', err);
-        (0, errors_1.handlePublicationError)(err, res, 'facebook', () => (0, exports.publishInMarketplace)(publications, res, page, browser), browser);
+        (0, errors_1.handlePublicationError)(err, ecommerce_1.availableEcommerce.facebook, () => (0, exports.publishInMarketplace)(publications, page, browser), browser);
     }
 });
 exports.publishInMarketplace = publishInMarketplace;

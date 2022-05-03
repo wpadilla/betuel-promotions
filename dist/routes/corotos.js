@@ -11,12 +11,17 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const corotosService_1 = require("../services/corotosService");
+const index_1 = require("../index");
+const enums_1 = require("../models/enums");
+const common_1 = require("../models/common");
+const ecommerce_1 = require("../utils/ecommerce");
 const corotosRouter = (0, express_1.Router)();
 corotosRouter.post('', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const data = req.body;
-        yield (0, corotosService_1.publishInCorotos)([...data], res);
-        // res.status(200).json(data);
+        (0, corotosService_1.publishInCorotos)([...data]);
+        index_1.SocketIoServer.emit(enums_1.EcommerceEvents.EMIT_PUBLISHING, new common_1.ECommerceResponse({ status: 'publishing', ecommerce: ecommerce_1.availableEcommerce.corotos }));
+        res.status(200).json(new common_1.CommonResponse({ status: 'started' }));
     }
     catch (err) {
         res.status(500).json({ err });

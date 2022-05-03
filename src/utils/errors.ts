@@ -1,5 +1,9 @@
 import { Browser } from 'puppeteer';
 import { EcommerceTypes } from './credentials';
+import { SocketIoServer } from '../index';
+import { EcommerceEvents } from '../models/enums';
+import { ECommerceResponse } from '../models/common';
+import { availableEcommerce } from './ecommerce';
 
 const errorsCount: {[N in EcommerceTypes]: number} = {
   corotos: 0,
@@ -8,14 +12,20 @@ const errorsCount: {[N in EcommerceTypes]: number} = {
   flea: 0,
 };
 
-export const handlePublicationError = (error: any, res: any, ecommerceType: EcommerceTypes, retry: () => any, browser: Browser) => {
+export const handlePublicationError = (error: Error, ecommerceType: EcommerceTypes, retry: () => any, browser: Browser) => {
   if (errorsCount[ecommerceType] >= 3) {
     errorsCount[ecommerceType] = 0;
     browser.close();
-    res.status(500).json({ error: error.message });
+    SocketIoServer.emit(EcommerceEvents.EMIT_FAILED,
+      new ECommerceResponse(
+        {
+          status: 'failed',
+          ecommerce: availableEcommerce.facebook,
+          error: error.message,
+        },
+      ));
   } else {
     errorsCount[ecommerceType] += errorsCount[ecommerceType] + 1;
     retry();
   }
 };
-

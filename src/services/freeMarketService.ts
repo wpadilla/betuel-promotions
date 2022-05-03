@@ -104,11 +104,11 @@ ${whatsappURL}
           }
         } catch (err: any) {
           console.log('Error Second Try Catch: ', err);
-          handlePublicationError(err, res, 'freeMarket', () => publishInFreeMarket(publications, res, page, browser), browser);
+          handlePublicationError(err, 'freeMarket', () => publishInFreeMarket(publications, res, page, browser), browser);
         }
       });
   } catch (err: any) {
     console.log('Error First Try Catch: ', err);
-    handlePublicationError(err, res, 'freeMarket', () => publishInFreeMarket(publications, res, page, browser), browser);
+    handlePublicationError(err, 'freeMarket', () => publishInFreeMarket(publications, res, page, browser), browser);
   }
 };

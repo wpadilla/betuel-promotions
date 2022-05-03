@@ -11,15 +11,22 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const facebookService_1 = require("../services/facebookService");
+const common_1 = require("../models/common");
+const index_1 = require("../index");
+const enums_1 = require("../models/enums");
+const ecommerce_1 = require("../utils/ecommerce");
 const facebookRouter = (0, express_1.Router)();
 facebookRouter.post('', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const data = req.body;
-        yield (0, facebookService_1.publishInMarketplace)([...data], res);
-        // res.status(200).json(data);
+        (0, facebookService_1.publishInMarketplace)([...data]);
+        index_1.SocketIoServer.emit(enums_1.EcommerceEvents.EMIT_PUBLISHING, new common_1.ECommerceResponse({ status: 'publishing', ecommerce: ecommerce_1.availableEcommerce.facebook }));
+        res.status(200).json(new common_1.CommonResponse({ status: 'started' }));
     }
     catch (err) {
-        res.status(500).json({ err });
+        res.status(500).json(new common_1.CommonResponse({
+            error: err.message,
+        }));
     }
 }));
 exports.default = facebookRouter;

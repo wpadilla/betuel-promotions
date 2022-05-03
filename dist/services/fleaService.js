@@ -16,13 +16,17 @@ exports.publishInFlea = void 0;
 const puppeteer_1 = __importDefault(require("puppeteer"));
 const urls_1 = __importDefault(require("../utils/urls"));
 const download_file_1 = __importDefault(require("../utils/download-file"));
+const common_1 = require("../models/common");
 const permissions_1 = require("../actions/permissions");
 const login_1 = require("../actions/login");
 const DOMRefs_1 = require("../utils/DOMRefs");
 const errors_1 = require("../utils/errors");
+const index_1 = require("../index");
+const enums_1 = require("../models/enums");
+const ecommerce_1 = require("../utils/ecommerce");
 let pubIndex = 0;
 // const responseData: any = [];
-const publishInFlea = (publications, res, lastPage, lastBrowser) => __awaiter(void 0, void 0, void 0, function* () {
+const publishInFlea = (publications, lastPage, lastBrowser) => __awaiter(void 0, void 0, void 0, function* () {
     let page = lastPage || {};
     let browser = lastBrowser || {};
     const isHeadless = publications.length <= 5;
@@ -78,24 +82,38 @@ ${publication.GodWord || 'Recuerda que Jesús te Ama'}`;
                 if (pubIndex === publications.length - 1) {
                     // responseData.push({ url: publicationUrl, id: publicationId });
                     pubIndex = 0;
-                    res.status(200).json({ success: true });
+                    index_1.SocketIoServer.emit(enums_1.EcommerceEvents.EMIT_PUBLISHED, new common_1.ECommerceResponse({
+                        publication,
+                        status: 'published',
+                        ecommerce: ecommerce_1.availableEcommerce.flea,
+                    }));
+                    index_1.SocketIoServer.emit(enums_1.EcommerceEvents.EMIT_COMPLETED, new common_1.ECommerceResponse({
+                        publication,
+                        status: 'completed',
+                        ecommerce: ecommerce_1.availableEcommerce.flea,
+                    }));
                     browser.close();
                 }
                 else {
                     pubIndex += 1;
+                    index_1.SocketIoServer.emit(enums_1.EcommerceEvents.EMIT_PUBLISHED, new common_1.ECommerceResponse({
+                        publication,
+                        status: 'published',
+                        ecommerce: ecommerce_1.availableEcommerce.flea,
+                    }));
                     // responseData.push({ url: publicationUrl, id: publicationId });
-                    (0, exports.publishInFlea)(publications, res, page, browser);
+                    (0, exports.publishInFlea)(publications, page, browser);
                 }
             }
             catch (err) {
                 console.log('Error Second Try Catch: ', err);
-                (0, errors_1.handlePublicationError)(err, res, 'freeMarket', () => (0, exports.publishInFlea)(publications, res, page, browser), browser);
+                (0, errors_1.handlePublicationError)(err, 'freeMarket', () => (0, exports.publishInFlea)(publications, page, browser), browser);
             }
         }));
     }
     catch (err) {
         console.log('Error First Try Catch: ', err);
-        (0, errors_1.handlePublicationError)(err, res, 'freeMarket', () => (0, exports.publishInFlea)(publications, res, page, browser), browser);
+        (0, errors_1.handlePublicationError)(err, 'freeMarket', () => (0, exports.publishInFlea)(publications, page, browser), browser);
     }
 });
 exports.publishInFlea = publishInFlea;

@@ -1,16 +1,19 @@
 import puppeteer, { Browser, Page } from 'puppeteer';
 import urls from '../utils/urls';
 import downloadFile from '../utils/download-file';
-import { IFBMarketPlacePublication } from '../models/common';
+import { ECommerceResponse, IFBMarketPlacePublication } from '../models/common';
 import { overridePermissions } from '../actions/permissions';
 import { corotosLogin } from '../actions/login';
 import { refObjFromKeys } from '../utils/DOMRefs';
 import { handlePublicationError } from '../utils/errors';
+import { SocketIoServer } from '../index';
+import { EcommerceEvents } from '../models/enums';
+import { availableEcommerce } from '../utils/ecommerce';
 
 let pubIndex = 0;
 // const responseData: any = [];
 
-export const publishInCorotos = async (publications: IFBMarketPlacePublication[], res: any, lastPage?: Page, lastBrowser?: Browser) => {
+export const publishInCorotos = async (publications: IFBMarketPlacePublication[], lastPage?: Page, lastBrowser?: Browser) => {
   let page = lastPage || {} as Page;
   let browser = lastBrowser || {} as Browser;
   const isHeadless = publications.length <= 1;
@@ -25,7 +28,6 @@ export const publishInCorotos = async (publications: IFBMarketPlacePublication[]
           '--disable-setuid-sandbox',
         ],
       });
-
 
       page = await browser.newPage();
       overridePermissions(browser, urls.corotos);
@@ -89,20 +91,42 @@ ${publication.GodWord || 'Recuerda que Jesús te Ama'}`;
           if (pubIndex === publications.length - 1) {
             // responseData.push({ url: publicationUrl, id: publicationId });
             pubIndex = 0;
-            res.status(200).json({ success: true });
+            SocketIoServer.emit(EcommerceEvents.EMIT_PUBLISHED,
+              new ECommerceResponse(
+                {
+                  publication,
+                  status: 'published',
+                  ecommerce: availableEcommerce.corotos,
+                },
+              ));
+            SocketIoServer.emit(EcommerceEvents.EMIT_COMPLETED,
+              new ECommerceResponse(
+                {
+                  publication,
+                  status: 'completed',
+                  ecommerce: availableEcommerce.corotos,
+                },
+              ));
             browser.close();
           } else {
             pubIndex += 1;
-            // responseData.push({ url: publicationUrl, id: publicationId });
-            publishInCorotos(publications, res, page, browser);
+            SocketIoServer.emit(EcommerceEvents.EMIT_PUBLISHED,
+              new ECommerceResponse(
+                {
+                  publication,
+                  status: 'published',
+                  ecommerce: availableEcommerce.corotos,
+                },
+              ));
+            publishInCorotos(publications, page, browser);
           }
         } catch (err: any) {
           console.log('Error Second Try Catch: ', err);
-          handlePublicationError(err, res, 'corotos', () => publishInCorotos(publications, res, page, browser), browser);
+          handlePublicationError(err, 'corotos', () => publishInCorotos(publications, page, browser), browser);
         }
       });
   } catch (err: any) {
     console.log('Error First Try Catch: ', err);
-    handlePublicationError(err, res, 'corotos', () => publishInCorotos(publications, res, page, browser), browser);
+    handlePublicationError(err, 'corotos', () => publishInCorotos(publications, page, browser), browser);
   }
 };

@@ -1,16 +1,19 @@
 import puppeteer, { Browser, Page } from 'puppeteer';
 import urls from '../utils/urls';
 import downloadFile from '../utils/download-file';
-import { IFBMarketPlacePublication } from '../models/common';
+import { ECommerceResponse, IFBMarketPlacePublication } from '../models/common';
 import { overridePermissions } from '../actions/permissions';
 import { fleaLogin } from '../actions/login';
 import { refObjFromKeys } from '../utils/DOMRefs';
 import { handlePublicationError } from '../utils/errors';
+import { SocketIoServer } from '../index';
+import { EcommerceEvents } from '../models/enums';
+import { availableEcommerce } from '../utils/ecommerce';
 
 let pubIndex = 0;
 // const responseData: any = [];
 
-export const publishInFlea = async (publications: IFBMarketPlacePublication[], res: any, lastPage?: Page, lastBrowser?: Browser) => {
+export const publishInFlea = async (publications: IFBMarketPlacePublication[], lastPage?: Page, lastBrowser?: Browser) => {
   let page = lastPage || {} as Page;
   let browser = lastBrowser || {} as Browser;
 
@@ -77,20 +80,43 @@ ${publication.GodWord || 'Recuerda que Jesús te Ama'}`;
           if (pubIndex === publications.length - 1) {
             // responseData.push({ url: publicationUrl, id: publicationId });
             pubIndex = 0;
-            res.status(200).json({ success: true });
+            SocketIoServer.emit(EcommerceEvents.EMIT_PUBLISHED,
+              new ECommerceResponse(
+                {
+                  publication,
+                  status: 'published',
+                  ecommerce: availableEcommerce.flea,
+                },
+              ));
+            SocketIoServer.emit(EcommerceEvents.EMIT_COMPLETED,
+              new ECommerceResponse(
+                {
+                  publication,
+                  status: 'completed',
+                  ecommerce: availableEcommerce.flea,
+                },
+              ));
             browser.close();
           } else {
             pubIndex += 1;
+            SocketIoServer.emit(EcommerceEvents.EMIT_PUBLISHED,
+              new ECommerceResponse(
+                {
+                  publication,
+                  status: 'published',
+                  ecommerce: availableEcommerce.flea,
+                },
+              ));
             // responseData.push({ url: publicationUrl, id: publicationId });
-            publishInFlea(publications, res, page, browser);
+            publishInFlea(publications, page, browser);
           }
         } catch (err: any) {
           console.log('Error Second Try Catch: ', err);
-          handlePublicationError(err, res, 'freeMarket', () => publishInFlea(publications, res, page, browser), browser);
+          handlePublicationError(err, 'freeMarket', () => publishInFlea(publications, page, browser), browser);
         }
       });
   } catch (err: any) {
     console.log('Error First Try Catch: ', err);
-    handlePublicationError(err, res, 'freeMarket', () => publishInFlea(publications, res, page, browser), browser);
+    handlePublicationError(err, 'freeMarket', () => publishInFlea(publications, page, browser), browser);
   }
 };
